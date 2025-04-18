@@ -12,7 +12,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // Code to be executed. I want to add flags later but that's for later.
   shell();
-    // Code to be executed
-    return EXIT_SUCCESS;
-  }
+
+  return EXIT_SUCCESS;
+}
