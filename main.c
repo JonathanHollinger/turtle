@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <shell.h>
 
 int main(int argc, char *argv[]) {
   printf("Hello world!\n");
+
   if (argc == 1) {
     printf("One argument");
   } else {
@@ -9,6 +11,8 @@ int main(int argc, char *argv[]) {
       printf("%s ", argv[i]);
     }
   }
+
+  shell();
     // Code to be executed
-    return 0;
+    return EXIT_SUCCESS;
   }
