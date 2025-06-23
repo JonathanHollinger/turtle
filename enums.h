@@ -3,3 +3,6 @@
 
 #define MAX_LEN 100
 #define STDOUT 0
+
+//Make "remove command line" function later
+#define QUIT "quit\n"
