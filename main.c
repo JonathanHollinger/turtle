@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "enums.h"
 #include "shell.h"
 
