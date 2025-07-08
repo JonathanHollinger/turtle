@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Iutilities
 OUTDIR = outputs
 
-SRC = main.c shell.c $(wildcard utilities/*.c)
+SRC = main.c shell.c effects.c model.c $(wildcard utilities/*.c)
 OBJ = $(patsubst %.c, $(OUTDIR)/%.o, $(SRC))
 EXEC = turtle
 

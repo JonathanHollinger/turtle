@@ -64,14 +64,13 @@ cmdline_init (void)
   return fsm;
 }
 
-// TODO: Create a transition function that is specific to this type
+// Creates a transition function that is specific to this type
 // of FSM. This function needs to take an fsm_t* and an event, returning
 // both the new state and the effect to perform (the latter is returned
 // using a call-by-reference parameter. This function should NOT contain
 // any "if" types of statements based on the state or event; it should
 // simply lookup these values in the tables defined above.
 
-/* Helper function for providing a printable string name for an event */
 const char *
 event_name (event_t evt)
 {
@@ -101,16 +100,14 @@ state_name (state_t st)
 bool
 handle_event (fsm_t *fsm, event_t event)
 {
+
+  // Asserts stop the current command if not true
   assert (fsm != NULL);
   assert (fsm->state < NUM_STATES); // Validate the state is within valid range
   assert (event < NUM_EVENTS);
 
   // Look up the transition table for the next state
   state_t next_state = _transitions[fsm->state][event];
-
-  // // Print the transition for debugging purposes
-  // printf ("[%s.%s -> %s]\n", state_name (fsm->state), event_name (event),
-  //         state_name (next_state));
 
   // If there's no valid transition, return false
   if (next_state == NST)

@@ -1,4 +1,6 @@
 #include "enums.h"
+#include "effects.h"
+#include "model.h"
 #include <stdio.h>
 #include <strings.h>
 #include <stdlib.h>
@@ -22,23 +24,34 @@ int shell() {
             break;
         }
 
+        fsm_t *command = cmdline_init();
+
 
 
         //Start executing externals, needs FSM to fully implement.
 
 
-        char **args;
+        char *token = strtok (buf, " ");
+      
+        while (token != NULL)
+          {
+            event_t event = lookup (token);
+            command->current_token = token;
+            handle_event (command, event);
+
+            token = strtok (NULL, " ");;
+            if (strcmp(command->args[0], "quit") == 0) 
+                {
+                    printf("\n");
+                    exit(EXIT_SUCCESS);
+                }
+          }
+        
+
+        // Parse the command
 
 
-        printf("%s\n", buf);
-        int pid = fork();
-
-        //Might be failing, might not be finding ls on the path. Uncertain
-        if (pid == 0) {
-            execvp(buf, args); //Replace null later, should be args.
-            printf("Command not found\n");
-            exit(1);
-        }
+        execute(command);
         
         wait(NULL);
 
