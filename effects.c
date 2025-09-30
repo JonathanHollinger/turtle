@@ -9,10 +9,19 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <libgen.h> // Include for dirname()
-
 #include "effects.h"
 #include "model.h"
+
+void prepend(char* s, const char* prefix) {
+    size_t len_prefix = strlen(prefix);
+    size_t len_s = strlen(s);
+
+    // Ensure enough space (consider reallocating if needed)
+    // For this example, it's assumed that 's' has sufficient capacity
+
+    memmove(s + len_prefix, s, len_s + 1); // Shift original string
+    memcpy(s, prefix, len_prefix);         // Copy prefix
+}
 
 static const char *builtins[] = {
     "echo",
@@ -90,7 +99,6 @@ void append(fsm_t *cmdmodel)
 /* Executed when either a NL or | (pipe) is encountered. */
 void execute(fsm_t *cmdmodel)
 {
-    printf("Starting execution\n");
     assert(cmdmodel->args != NULL);
 
     char *cmd = cmdmodel->args[0];
@@ -126,7 +134,6 @@ void execute(fsm_t *cmdmodel)
     //     char *remains = join_strings(cmdmodel->args, cmdmodel->nargs);
     //     unset(remains);
     // }
-    printf("Starting pipe\n");
     int pipefd[2];
     if (pipe(pipefd) == -1)
     {
@@ -137,7 +144,6 @@ void execute(fsm_t *cmdmodel)
         cmdmodel->current_token = NULL;
         return;
     }
-    // printf("%s\n", cmd);
 
     // posix_spawnp requires a special struct to handle process creation
     pid_t pid;
@@ -153,7 +159,11 @@ void execute(fsm_t *cmdmodel)
     posix_spawn_file_actions_adddup2(&actions, STDOUT_FILENO, pipefd[1]); // Redirect stdout to pipe
     close(pipefd[1]);                                                     // Close the write end of the pipe in the parent, after adding it to actions
 
-    printf("Starting posix\n");
+    for (size_t i = 0; i < cmdmodel->nargs; i++) {
+        printf("%s\n", cmdmodel->args[i]);
+    }
+
+
     if (posix_spawnp(&pid, cmd, &actions, &attr, cmdmodel->args, NULL) != 0)
     {
         printf("Command not found\n");
@@ -171,16 +181,6 @@ void execute(fsm_t *cmdmodel)
     // Wait for the child process to finish
     int child_status;
     waitpid(pid, &child_status, 0);
-
-    if (WIFEXITED(child_status))
-    {
-        // Optionally, you can print the exit status
-        printf("Child process executed successfully with exit status %d\n", WEXITSTATUS(child_status));
-    }
-    else
-    {
-        fprintf(stderr, "Error: ls command did not terminate normally\n");
-    }
 
     // Close the read end of the pipe in the parent process
     close(pipefd[0]);
